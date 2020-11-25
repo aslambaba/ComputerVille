@@ -1,37 +1,58 @@
 import React from "react"
-import { graphql, StaticQuery } from "gatsby"
+import { graphql, useStaticQuery } from "gatsby"
+import { loadStripe } from "@stripe/stripe-js"
+import Style from './style/main.css'
 
-export default function Products(props) {
-  return (
-    <StaticQuery
-      query={graphql`
-        query ProductPrices {
-          prices: allStripePrice(
-            filter: { active: { eq: true } }
-            sort: { fields: [unit_amount] }
-          ) {
-            edges {
-              node {
-                id
-                active
-                currency
-                unit_amount
-                product {
-                  id
-                  name
-                }
-              }
+const dotenv = require('dotenv');
+dotenv.config();
+
+export default function Products() {
+
+    const ClickHandler = async (event, a) => {
+        event.preventDefault()
+        const stripe = await loadStripe(PROCESS.env.STRIPE_PUBLISH_KEY);
+        const { error } = await stripe.redirectToCheckout({
+            mode: "payment",
+            lineItems: [{ price: a, quantity: 1 }],
+            successUrl: `http://localhost:8000/page2/`,
+            cancelUrl: `http://localhost:8000/failed/`,
+        })
+        if (error)
+            console.log(error);
+    }
+
+    const gqlData = useStaticQuery(graphql`
+    query MyQuery {
+        allStripePrice {
+          nodes {
+            product {
+              images
+              id
+              description
+              name
             }
+            id
           }
         }
-      `}
-      render={({ prices }) => (
+      } 
+    `);
+    const myProducts = gqlData.allStripePrice.nodes;
+    console.log(myProducts);
+    return (
         <div>
-          {prices.edges.map(({ node: price }) => (
-            <p key={price.id}>{price.product.name}</p>
-          ))}
+            <h1>H</h1>
+            {
+                myProducts.map(({ id, product }) => {
+                    return (
+                        <div>
+                            <p>{id}</p>
+                            <h3>{product.name}</h3>
+                            <img src={product.images[0]} />
+                            <button onClick={(e)=> ClickHandler(e,id)}>Buy</button>
+                        </div>
+                    )
+                })
+            }
         </div>
-      )}
-    />
-  )
+    )
 }
