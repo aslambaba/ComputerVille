@@ -1,7 +1,7 @@
 import React from "react"
 import { graphql, useStaticQuery } from "gatsby"
-import { loadStripe } from "@stripe/stripe-js"
-import Style from './style/main.css'
+import { loadStripe } from "@stripe/stripe-js";
+import  MainStyle from './style/main.module.css'
 
 const dotenv = require('dotenv');
 dotenv.config('');
@@ -39,16 +39,16 @@ export default function Products() {
     const myProducts = gqlData.allStripePrice.nodes;
     console.log(myProducts);
     return (
-        <div>
-            <h1>H</h1>
+        <div className={MainStyle.MainContainer}>
+            <h1 className={MainStyle.heading}>Welcome to Computer Velie</h1>
+            <div className={MainStyle.LandingImg}></div>
             {
                 myProducts.map(({ id, product }) => {
                     return (
-                        <div>
-                            <p>{id}</p>
+                        <div className={MainStyle.ProductSec} key={id}>
                             <h3>{product.name}</h3>
-                            <img src={product.images[0]} />
-                            <button onClick={(e)=> ClickHandler(e,id)}>Buy</button>
+                            <img alt={product.name} className={MainStyle.ProImg} src={product.images[0]} />
+                            <button className={MainStyle.BuyBtn} onClick={(e)=> ClickHandler(e,id)}>Buy</button>
                         </div>
                     )
                 })
