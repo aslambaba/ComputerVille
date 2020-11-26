@@ -4,16 +4,16 @@ import { loadStripe } from "@stripe/stripe-js"
 import Style from './style/main.css'
 
 const dotenv = require('dotenv');
-dotenv.config();
+dotenv.config('');
 
 export default function Products() {
 
-    const ClickHandler = async (event, a) => {
+    const ClickHandler = async (event, product_price_id) => {
         event.preventDefault()
-        const stripe = await loadStripe(PROCESS.env.STRIPE_PUBLISH_KEY);
+        const stripe = await loadStripe(process.env.STRIPE_PUBLISH_KEY);
         const { error } = await stripe.redirectToCheckout({
             mode: "payment",
-            lineItems: [{ price: a, quantity: 1 }],
+            lineItems: [{ price: product_price_id, quantity: 1 }],
             successUrl: `http://localhost:8000/page2/`,
             cancelUrl: `http://localhost:8000/failed/`,
         })
