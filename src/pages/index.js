@@ -10,7 +10,7 @@ export default function Products() {
 
     const ClickHandler = async (event, product_price_id) => {
         event.preventDefault()
-        const stripe = await loadStripe('pk_test_51Hr8RFEAxjBMcLOop6ah7qFNyuJzOjKU12Xu2f986khPIR12WVZ2xlvkKfG2l4ueBIfFGgHcdmd3r2CbLe483Mjk00tDQwG0xw');
+        const stripe = await loadStripe(React.APP.process.env.STRIPE_PUBLISH_KEY);
         const { error } = await stripe.redirectToCheckout({
             mode: "payment",
             lineItems: [{ price: product_price_id, quantity: 1 }],
@@ -40,7 +40,7 @@ export default function Products() {
     console.log(myProducts);
     return (
         <div className={MainStyle.MainContainer}>
-            <h1 className={MainStyle.heading}>Welcome to Computer Velie</h1>
+            <h1 className={MainStyle.heading}>Welcome to Computer Velie With Custome Stripe Checkout</h1>
             <div className={MainStyle.LandingImg}></div>
             {
                 myProducts.map(({ id, product }) => {
